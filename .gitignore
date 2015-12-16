@@ -1,0 +1,17 @@
+.*
+!.gitignore
+*~
+databases/*
+sessions/*
+errors/*
+cache/*
+uploads/*
+languages/*
+cron/*
+static/temp
+progress.log
+*.w2p
+routes.example.py
+*.py[cod]
+models/00_domainname.py
+models/01_db.py
