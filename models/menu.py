@@ -5,16 +5,16 @@
 ## Customize your APP title, subtitle and menus here
 #########################################################################
 
-response.logo = A(B('web',SPAN(2),'py'),XML('&trade;&nbsp;'),
-                  _class="navbar-brand",_href="http://www.web2py.com/",
+response.logo = A(B('gti',SPAN(2),'py'),
+                  _class="navbar-brand",_href=domainname+"/"+appname,
                   _id="web2py-logo")
 response.title = request.application.replace('_',' ').title()
-response.subtitle = ''
+response.subtitle = 'Grupo de Trabalho Tecnologia da Informação - Partido Pirata no Brasil'
 
 ## read more at http://dev.w3.org/html5/markup/meta.name.html
-response.meta.author = 'Your Name <you@example.com>'
-response.meta.description = 'a cool new app'
-response.meta.keywords = 'web2py, python, framework'
+response.meta.author = 'Desobediente Civil <desci@riseup.net>'
+response.meta.description = 'Aplicativo web2py para o GTI-PIRATAS'
+response.meta.keywords = 'gti, pirata, piratas, partido pirata, partido pirata do brasil, grupo de trabalho, tecnologia da informação, partido pirata no brasil'
 response.meta.generator = 'Web2py Web Framework'
 
 ## your http://google.com/analytics id
@@ -25,10 +25,11 @@ response.google_analytics_id = None
 #########################################################################
 
 response.menu = [
-    (T('Home'), False, URL('default', 'index'), [])
+    (T('Home'), False, URL('default', 'index'), []),
+	('', False, A(T('Pirate Party'), _href='http://partidopirata.org/', _target='_blank'), []),
 ]
 
-DEVELOPMENT_MENU = True
+# DEVELOPMENT_MENU = True
 
 #########################################################################
 ## provide shortcuts for development. remove in production

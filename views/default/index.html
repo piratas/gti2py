@@ -1,52 +1,178 @@
-{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
-{{extend 'layout.html'}}
+<!DOCTYPE html>
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="{{=T.accepted_language or 'en'}}"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<!-- www.phpied.com/conditional-comments-block-downloads/ -->
+<!-- Always force latest IE rendering engine
+	(even in intranet) & Chrome Frame
+	Remove this if you use the .htaccess -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge{{=not request.is_local and ',chrome=1' or ''}}">
+<!--	Mobile Viewport Fix
+	j.mp/mobileviewport & davidbcalhoun.com/2010/viewport-metatag
+	device-width: Occupy full width of the screen in its current orientation
+	initial-scale = 1.0 retains dimensions instead of zooming out if page height > device height
+	user-scalable = yes allows the user to zoom in -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{=response.title or request.application}}</title>
+<!-- http://dev.w3.org/html5/markup/meta.name.html -->
+<meta name="application-name" content="{{=request.application}}">
+<!-- Speaking of Google, don't forget to set your site up:
+	http://google.com/webmasters -->
+<meta name="google-site-verification" content="">
+<!-- include stylesheets -->
+<link rel="stylesheet" href="{{=URL('static','css/bootstrap.min.css')}}"/>
+<link rel="stylesheet" href="{{=URL('static','css/web2py-bootstrap3.css')}}"/>
+<link rel="stylesheet" href="{{=URL('static','css/estilos.css')}}"/>
+<link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
+<link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
+<!-- All JavaScript at the bottom, except for Modernizr which enables
+	HTML5 elements & feature detects -->
+<script src="{{=URL('static','js/modernizr-2.8.3.min.js')}}"></script>
+<!--[if lt IE 9]>
+	<script src="{{=URL('static','js/respond-1.4.2.min.js')}}"></script>
+	<![endif]-->
+<!-- Favicons -->
+{{include 'web2py_ajax.html'}} <!-- this includes jquery.js, calendar.js/.css and web2py.js -->
+{{block head}}{{end}}
+{{
+# using sidebars need to know what sidebar you want to use
+mc0 = 'col-md-12'
+mc1 = 'col-md-9'
+mc2 = 'col-md-6'
+left_sidebar_enabled = globals().get('left_sidebar_enabled', False)
+right_sidebar_enabled = globals().get('right_sidebar_enabled', False)
+middle_column = {0: mc0, 1: mc1, 2: mc2}[
+(left_sidebar_enabled and 1 or 0)+(right_sidebar_enabled and 1 or 0)]
+}}
+</head>
 
+<body>
+<!--[if lt IE 8]><p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p><![endif]-->
+<div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>
+<!-- Navbar ======================================= -->
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">-->
+			{{=response.logo or ''}}
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+		</div>
+		<div class="collapse navbar-collapse navbar-ex1-collapse">
+			<ul class="nav navbar-nav navbar-right">
+				{{='auth' in globals() and auth.navbar('Welcome',mode='dropdown') or ''}}
+			</ul>
+			{{if response.menu:}}
+			{{=MENU(response.menu, _class='nav navbar-nav',li_class='dropdown',ul_class='dropdown-menu')}}
+			{{pass}}
+		</div>
+<!--
+		<div id="navbar" class="navbar-collapse collapse">
+			<form class="navbar-form navbar-right">
+				<div class="form-group">
+					<input type="text" placeholder="Email" class="form-control">
+				</div>
+				<div class="form-group">
+					<input type="password" placeholder="Password" class="form-control">
+				</div>
+				<button type="submit" class="btn btn-success">Sign in</button>
+			</form>
+		</div>
+-->
+	</div>
+</nav>
+<!-- Masthead ===================================== -->		
 {{block header}}
-    <header class="container-fluid background">
-      <div class="jumbotron text-center">
-        {{if response.title:}}
-        <h1>{{=response.title}}
-          <small>{{=response.subtitle or ''}}</small></h1>
-        {{pass}}
-      </div>
-    </header>
-{{end}}
-
-{{if 'message' in globals():}}
-<h2>{{=message}}</h2>
-<p class="lead">{{=T('How did you get here?')}}</p>
-<ol>
-  <li>{{=T('You are successfully running web2py')}}</li>
-  <li>{{=XML(T('You visited the url %s', A(request.env.path_info,_href=request.env.path_info)))}}</li>
-  <li>{{=XML(T('Which called the function %s located in the file %s',
-    (A(request.function+'()',_href='#'),
-    A('web2py/applications/%(application)s/controllers/%(controller)s.py' % request,
-    _href=URL('admin','default','peek', args=(request.application,'controllers',request.controller+'.py'))))))}}</li>
-  <li>{{=XML(T('The output of the file is a dictionary that was rendered by the view %s',
-    A('web2py/applications/%(application)s/views/%(controller)s/index.html' % request,
-    _href=URL('admin','default','peek',args=(request.application,'views',request.controller,'index.html')))))}}</li>
-  <li>{{=T('You can modify this application and adapt it to your needs')}}</li>
-</ol>
-{{elif 'content' in globals():}}
-{{=content}}
-{{else:}}
-{{=BEAUTIFY(response._vars)}}
-{{pass}}
-
-{{block right_sidebar}}
-<div class="panel panel-info">
-  <div class="panel-heading"><h3 class="panel-title"><a class="btn-block"
-      href="{{=URL('admin','default','index')}}">
-      <i class="glyphicon glyphicon-cog"></i>
-      {{=T("admin")}}
-    </a></h3></div>
-  <div class="panel-body">
-    {{=T("Don't know what to do?")}}
-  </div>
-  <ul class="list-group">
-    <li class="list-group-item">{{=A(T("Online examples"), _href=URL('examples','default','index'))}}</li>
-    <li class="list-group-item"><a href="http://web2py.com">web2py.com</a></li>
-    <li class="list-group-item"><a href="http://web2py.com/book">{{=T('Documentation')}}</a></li>
-  </ul>
+<div class="jumbotron">
+	<div class="container">
+		<h1>GTI PIRATA</h1>
+		<h2>Grupo de Trabalho Tecnologia da Informa&ccedil;&atilde;o - Partido Pirata no Brasil</h2>
+		<p>Este aplicativo serve como forma de apoio para o Grupo de Trabalho Tecnologia da Informa&ccedil;&atilde;o (GTI) do Partido Pirata no Brasil.</p>
+		<p><a class="btn btn-primary btn-lg" href="http://partidopirata.org/" target="_blank" role="button">Site do Partido Pirata</a></p>
+	</div>
 </div>
 {{end}}
+<!-- Main ========================================= -->
+<!-- Begin page content -->
+<div class="container">
+	<!-- Example row of columns -->
+	<div class="row">
+		<div class="col-md-4">
+			<h2>O que &eacute; e pra qu&ecirc; isto&quest;</h2>
+			<p>N&atilde;o sei. Segue os seguintes links e tira tuas pr&oacute;prias conclus&otilde;es:</p>
+			<ul class="botoes">
+				<li><a class="btn btn-info" href="https://www.loomio.org/d/svmYCHka/" role="button">T&oacute;pico no Loomio &raquo;</a></li>
+				<li><a class="btn btn-info" href="https://www.loomio.org/d/dZFh089M/" role="button">Outro t&oacute;pico no Loomio &raquo;</a></li>
+				<li><a class="btn btn-success" href="https://tree.taiga.io/project/tipirata/issue/50" role="button">Caso no Taiga &raquo;</a></li>
+				<li><a class="btn btn-success" href="https://tree.taiga.io/project/tipirata/us/51" role="button">Hist&oacute;ria no Taiga &raquo;</a></li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<h2>Formul&aacute;rio "Demandas GTI"</h2>
+			<p>A primeira demanda &eacute; fazer o formul&aacute;rio. A outra &eacute; fazer uma imagem pra botar ali em cima no lugar desse cinza.</p>
+	 </div>
+		<div class="col-md-4">
+			<h2>Hist&oacute;ria do GTI</h2>
+			<p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+			<p><a class="btn btn-danger" href="https://tree.taiga.io/project/tipirata/wiki/historia-do-gti" role="button">Hist&oacute;ria do GTI &raquo;</a></p>
+		</div>
+	</div>
+<div class="container-fluid main-container">
+	{{if left_sidebar_enabled:}}
+		<div class="col-md-3 left-sidebar">
+				{{block left_sidebar}}
+				<h3>Left Sidebar</h3>
+				<p></p>
+				{{end}}
+		</div>
+	{{pass}}
+
+	<div class="{{=middle_column}}">
+		{{block center}}
+		{{include}}
+		{{end}}
+	</div>
+
+	{{if right_sidebar_enabled:}}
+		<div class="col-md-3">
+				{{block right_sidebar}}
+				<h3>Right Sidebar</h3>
+				<p></p>
+				{{end}}
+		</div>
+	{{pass}}
+
+</div>
+</div>
+<hr>
+{{block footer}} <!-- this is default footer -->			
+<footer class="footer">
+	<div class="container-fluid">
+		<div class="copyright pull-left">{{=T('Copyleft')}}{{=XML('&nbsp;(')}}{{=A("AGPL", _target="_blank", _href="https://notabug.org/piratas/gti2py/src/master/LICENSE")}}{{=XML(')&nbsp;')}} {{=request.now.year}}</div>
+		<div id="poweredBy" class="pull-right">{{=T('Powered by')}}{{=XML('&nbsp;')}}{{=A(SPAN('web2py'), _target="_blank", _href="http://www.web2py.com/")}}</a></div>
+		<div class="center">{{=A(T('Source Code'), _target="_blank", _href="https://notabug.org/piratas/gti2py/")}}</div>
+	</div>
+</footer>
+{{end}}
+<!-- The javascript =============================== -->
+<script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
+<script src="{{=URL('static','js/web2py-bootstrap3.js')}}"></script>
+{{block page_js}}{{end page_js}}
+{{if response.google_analytics_id:}}
+<!-- Analytics ==================================== -->
+<script src="{{=URL('static','js/analytics.min.js')}}"></script>
+<script type="text/javascript">
+	analytics.initialize({
+	'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'}
+	});
+</script>
+{{pass}}
+<!-- Share ============================y============ -->
+<script src="{{=URL('static','js/share.js',vars=dict(static=URL('static','images')))}}"></script>
+</body>
+</html>
+

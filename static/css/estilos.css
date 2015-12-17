@@ -1,0 +1,14 @@
+@charset 'UTF-8';
+/*
+	Kopimi 2015
+	Desobediente Civil <desci@riseup.net>
+	this file is released under public domain and you can use without limitations
+*/
+ul.botoes {
+	list-style-type:none;
+	display:inline;
+}
+ul.botoes li {
+	padding:0.1em;
+}
+
